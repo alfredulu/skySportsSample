@@ -62,21 +62,18 @@ const news = [
 ];
 
 // ---------- Utilities ----------
-function el(tag, cls) {
+function el(tag, options = {}) {
   const e = document.createElement(tag);
-  if (cls) e.className = cls;
+  if (typeof options === "string") {
+    e.className = options;
+  } else {
+    Object.entries(options).forEach(([key, value]) => {
+      if (key === "className") e.className = value;
+      else if (key === "textContent") e.textContent = value;
+      else e.setAttribute(key, value);
+    });
+  }
   return e;
-}
-
-// Utility function to create elements with attributes
-function createElement(tag, options = {}) {
-  const element = document.createElement(tag);
-  Object.entries(options).forEach(([key, value]) => {
-    if (key === "className") element.className = value;
-    else if (key === "textContent") element.textContent = value;
-    else element.setAttribute(key, value);
-  });
-  return element;
 }
 
 // ---------- Ticker ----------
@@ -154,19 +151,8 @@ const scoresList = document.getElementById("scores-list");
 async function fetchScores() {
   try {
     scoresList.textContent = "Loading live scores...";
-    const res = await fetch(
-      "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328"
-    );
-    const data = await res.json();
-    renderScores(data.events);
-  } catch (err) {
-    console.error("Failed to fetch scores:", err);
-    scoresList.textContent = "Unable to load live scores ⚠️";
-  }
-}
-
 // Fetch live scores with error handling
-async function fetchLiveScores(apiUrl) {
+async function fetchScores(apiUrl = "https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=4328") {
   try {
     scoresList.textContent = "Loading live scores...";
     const response = await fetch(apiUrl);
@@ -178,9 +164,6 @@ async function fetchLiveScores(apiUrl) {
     scoresList.textContent = "Unable to load live scores ⚠️";
   }
 }
-
-// Render the fetched scores
-function renderScores(events) {
   scoresList.innerHTML = "";
   events.forEach((s) => {
     const row = el("div", "score");
@@ -214,7 +197,7 @@ function renderScores(events) {
 fetchScores();
 
 // ---------- Accessibility & small helpers ----------
-document.getElementById("year").textContent = new Date().getFullYear();
+fetchScores(); // Default API URL is used
 
 // Keyboard carousel controls
 document.addEventListener("keydown", (e) => {
