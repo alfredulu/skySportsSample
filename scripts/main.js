@@ -68,6 +68,17 @@ function el(tag, cls) {
   return e;
 }
 
+// Utility function to create elements with attributes
+function createElement(tag, options = {}) {
+  const element = document.createElement(tag);
+  Object.entries(options).forEach(([key, value]) => {
+    if (key === "className") element.className = value;
+    else if (key === "textContent") element.textContent = value;
+    else element.setAttribute(key, value);
+  });
+  return element;
+}
+
 // ---------- Ticker ----------
 const tickerEl = document.getElementById("ticker-content");
 tickerEl.textContent = headlines.concat(headlines).join(" • ");
@@ -150,6 +161,20 @@ async function fetchScores() {
     renderScores(data.events);
   } catch (err) {
     console.error("Failed to fetch scores:", err);
+    scoresList.textContent = "Unable to load live scores ⚠️";
+  }
+}
+
+// Fetch live scores with error handling
+async function fetchLiveScores(apiUrl) {
+  try {
+    scoresList.textContent = "Loading live scores...";
+    const response = await fetch(apiUrl);
+    if (!response.ok) throw new Error("Network response was not ok");
+    const data = await response.json();
+    renderScores(data.events || []);
+  } catch (error) {
+    console.error("Error fetching live scores:", error);
     scoresList.textContent = "Unable to load live scores ⚠️";
   }
 }
