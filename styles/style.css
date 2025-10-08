@@ -36,8 +36,9 @@ body {
 header {
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin-bottom: 18px;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 .brand {
   display: flex;
@@ -119,6 +120,15 @@ nav a {
   100% {
     transform: translateX(-50%);
   }
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: inherit;
 }
 
 /* Main layout */
@@ -300,6 +310,41 @@ footer {
     flex-direction: column;
     align-items: flex-start;
     padding: 10px;
+    position: relative;
+  }
+
+  /* Show hamburger on mobile */
+  .menu-toggle {
+    display: block;
+    margin-left: auto; /* push it to the right side */
+    order: 2;
+  }
+
+  /* Hide the nav until menu is toggled */
+  nav[aria-label="Main navigation"] {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--card);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 180px;
+    padding: 10px;
+    z-index: 10;
+  }
+
+  /* When the nav is active (toggled open) */
+  nav[aria-label="Main navigation"].show {
+    display: flex;
+  }
+
+  /* Search moves to next line on small screens */
+  .search {
+    width: 100%;
+    order: 3;
+    margin-top: 8px;
   }
 
   nav ul {
@@ -344,5 +389,45 @@ footer {
 @media (min-width: 769px) and (max-width: 1024px) {
   main {
     grid-template-columns: 2fr 1fr;
+  }
+}
+
+/* 🍔 Hamburger menu styles */
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* Responsive nav behavior */
+@media (max-width: 768px) {
+  header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: var(--bg-alt, #0a0a0a);
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  nav.active {
+    display: flex;
+  }
+
+  .nav-toggle {
+    display: block;
+  }
+
+  .search {
+    order: 3;
+    width: 100%;
   }
 }

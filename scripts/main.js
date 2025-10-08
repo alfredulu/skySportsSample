@@ -203,3 +203,13 @@ setInterval(() => {
   const txt = tickerEl.textContent;
   tickerEl.textContent = txt.slice(2) + txt.slice(0, 2);
 }, 3000);
+
+// Toggle mobile menu visibility
+const menuToggle = document.querySelector(".menu-toggle");
+const nav = document.querySelector('nav[aria-label="Main navigation"]');
+
+if (menuToggle && nav) {
+  menuToggle.addEventListener("click", () => {
+    nav.classList.toggle("show");
+  });
+}
