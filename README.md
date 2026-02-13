@@ -1,30 +1,19 @@
-# ProtoSports (under construction 🛠)
+# SkySportsSample — Modern Rebuild (Next.js + FastAPI)
 
-ProtoSports is a demo sports news website that provides live scores, breaking news, and match highlights.
+This repository is being rebuilt as a portfolio-grade full-stack app inspired by Sky Sports:
+- Sports news (articles/headlines)
+- Live scores (cached + normalized via API)
+- Clean UI + real API + database migrations
 
-## Features
+## Stack (current)
+- Web: Next.js (TypeScript) + Tailwind
+- API: FastAPI (Python)
 
-- Live sports ticker
-- News carousel
-- Live scores fetched from TheSportsDB API
-- Responsive design for mobile and desktop
+## Planned next
+- PostgreSQL + Alembic migrations
+- Redis caching for external sports API
+- CI (GitHub Actions), tests, deployment
 
-## Setup
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd skySportsSample
-   ```
-3. Open `index.html` in your browser.
-
-## API Integration
-
-This project fetches live scores from [TheSportsDB](https://www.thesportsdb.com/). Replace the API key in `scripts/main.js` with your own for production use.
-
-## License
-
-This project is for demo purposes only.
+## Local dev (coming next commit)
+Web: `apps/web`  
+API: `apps/api`
