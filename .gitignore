@@ -1,6 +1,15 @@
+# Node
 node_modules/
+.next/
+out/
 dist/
+
+# Python
+__pycache__/
+*.pyc
+apps/api/.venv/
+.pytest_cache/
+
+# Env
 .env
-.DS_Store
-*.log
-*.tmp
+.env.*
