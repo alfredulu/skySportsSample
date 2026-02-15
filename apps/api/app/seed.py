@@ -1,5 +1,9 @@
 from .db import SessionLocal
 from .models import Article
+from .db import engine
+from .models import Base
+Base.metadata.create_all(bind=engine)
+
 
 def run():
     db = SessionLocal()
