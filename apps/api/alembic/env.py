@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config
 from sqlalchemy import create_engine, pool
 
 from app.config import settings
@@ -64,7 +65,8 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection, target_metadata=target_metadata,
+            compare_type=True,  # detects column type changes
         )
 
         with context.begin_transaction():
