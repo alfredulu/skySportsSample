@@ -19,13 +19,6 @@ def health():
     return {"status": "ok"}
 
 
-@app.on_event("startup")
-def on_startup():
-    # Temporary for MVP: auto-create tables.
-    # Later we will replace this with Alembic migrations.
-    Base.metadata.create_all(bind=engine)
-
-
 @app.get("/v1/articles")
 def list_articles(db: Session = Depends(get_db)):
     articles = db.query(Article).order_by(Article.created_at.desc()).limit(20).all()
