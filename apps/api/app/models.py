@@ -1,7 +1,7 @@
 from sqlalchemy import String, Text, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 from .db import Base
-
+from datetime import datetime
 
 class Article(Base):
     __tablename__ = "articles"
@@ -12,4 +12,7 @@ class Article(Base):
     sport: Mapped[str] = mapped_column(String(50), default="football")
     source: Mapped[str | None] = mapped_column(String(120), nullable=True)
     image_url: Mapped[str | None] = mapped_column(Text(), nullable=True)
-    created_at: Mapped[object] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+    DateTime(timezone=True),
+    server_default=func.now(),
+)
