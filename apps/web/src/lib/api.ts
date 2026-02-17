@@ -1,3 +1,28 @@
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function fetchWithRetry(
+  url: string,
+  opts?: RequestInit,
+  tries = 10,
+  delayMs = 300
+) {
+  let lastErr: unknown;
+
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(url, opts);
+      return res;
+    } catch (err) {
+      lastErr = err;
+      await sleep(delayMs);
+    }
+  }
+
+  throw lastErr;
+}
+
 export type Article = {
   id: number;
   title: string;
@@ -29,7 +54,7 @@ export async function getArticles(params?: {
     qs.toString() ? `?${qs}` : ""
   }`;
 
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetchWithRetry(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to fetch articles: ${res.status}`);
 
   return res.json();
