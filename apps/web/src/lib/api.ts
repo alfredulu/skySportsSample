@@ -8,15 +8,29 @@ export type Article = {
   created_at: string;
 };
 
-export async function getArticles(): Promise<Article[]> {
-  const res = await fetch("http://127.0.0.1:8000/v1/articles", {
-    // Avoid caching during dev
-    cache: "no-store",
-  });
+export type ArticlesPage = {
+  items: Article[];
+  total: number;
+  limit: number;
+  offset: number;
+};
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch articles: ${res.status}`);
-  }
+export async function getArticles(params?: {
+  sport?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<ArticlesPage> {
+  const qs = new URLSearchParams();
+  if (params?.sport) qs.set("sport", params.sport);
+  if (params?.limit) qs.set("limit", String(params.limit));
+  if (params?.offset) qs.set("offset", String(params.offset));
+
+  const url = `http://localhost:8000/v1/articles${
+    qs.toString() ? `?${qs}` : ""
+  }`;
+
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to fetch articles: ${res.status}`);
 
   return res.json();
 }

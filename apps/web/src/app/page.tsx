@@ -1,7 +1,7 @@
 import { getArticles } from "@/lib/api";
 
 export default async function Home() {
-  const articles = await getArticles();
+  const page = await getArticles({ limit: 20, offset: 0 });
 
   return (
     <main className="mx-auto max-w-5xl p-6">
@@ -10,10 +10,13 @@ export default async function Home() {
         <p className="text-muted-foreground">
           Modern rebuild — Next.js + FastAPI + Postgres
         </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Showing {page.items.length} of {page.total}
+        </p>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        {articles.map((a) => (
+        {page.items.map((a) => (
           <article
             key={a.id}
             className="rounded-xl border p-4 hover:shadow-sm transition"
