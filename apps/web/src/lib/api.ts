@@ -1,5 +1,5 @@
-function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function fetchWithRetry(
@@ -7,13 +7,12 @@ async function fetchWithRetry(
   opts?: RequestInit,
   tries = 10,
   delayMs = 300
-) {
+): Promise<Response> {
   let lastErr: unknown;
 
   for (let i = 0; i < tries; i++) {
     try {
-      const res = await fetch(url, opts);
-      return res;
+      return await fetch(url, opts);
     } catch (err) {
       lastErr = err;
       await sleep(delayMs);
@@ -51,11 +50,14 @@ export async function getArticles(params?: {
   if (params?.offset) qs.set("offset", String(params.offset));
 
   const url = `http://localhost:8000/v1/articles${
-    qs.toString() ? `?${qs}` : ""
+    qs.toString() ? `?${qs.toString()}` : ""
   }`;
 
   const res = await fetchWithRetry(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to fetch articles: ${res.status}`);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch articles: ${res.status}`);
+  }
 
   return res.json();
 }
