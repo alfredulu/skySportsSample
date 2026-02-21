@@ -62,9 +62,11 @@ export async function getArticles(params?: {
   return res.json();
 }
 
-export async function getArticle(id: number): Promise<Article> {
+export async function getArticleById(id: number): Promise<Article> {
   const url = `http://localhost:8000/v1/articles/${id}`;
+
   const res = await fetchWithRetry(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`Failed to fetch article: ${res.status}`);
+
   return res.json();
 }
