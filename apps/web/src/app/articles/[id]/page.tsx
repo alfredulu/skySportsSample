@@ -123,15 +123,17 @@ export default async function ArticleDetailsPage(props: {
 
           {/* Placeholder body for v1 */}
           <div className="mt-6 space-y-4 text-sm leading-7 text-slate-300">
-            <p>
-              This is the article details page for the selected story. In a
-              later version, you can expand this to include full article
-              content, author info, images, and related links.
-            </p>
-            <p>
-              For now, this page confirms your full stack flow is working:
-              homepage → API → database → detail route.
-            </p>
+            {article.body ? (
+              article.body.split("\n\n").map((para, i) => <p key={i}>{para}</p>)
+            ) : (
+              <>
+                <p>This article does not yet have full body content.</p>
+                <p>
+                  Add a <code>body</code> field in the backend seed data to
+                  render full story text here.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </section>

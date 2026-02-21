@@ -26,6 +26,7 @@ export type Article = {
   id: number;
   title: string;
   summary: string | null;
+  body?: string | null;
   sport: string;
   source: string | null;
   image_url: string | null;
