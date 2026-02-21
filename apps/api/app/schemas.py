@@ -12,6 +12,7 @@ class ArticleOut(BaseModel):
     source: str | None
     image_url: str | None
     created_at: datetime
+    body: str | None = None
 
 
 class ArticlesPage(BaseModel):
