@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from .db import SessionLocal, engine
 from .models import Article, Base
@@ -48,3 +48,9 @@ def list_articles(
         offset=offset,
     )
 
+@app.get("/v1/articles/{article_id}", response_model=ArticleOut)
+def get_article(article_id: int, db: Session = Depends(get_db)):
+    article = db.get(Article, article_id)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    return article
