@@ -180,7 +180,12 @@ export default async function Home(props: {
 
                 <div className="mt-6 flex items-center justify-between text-xs text-muted-foreground">
                   <span>Top story</span>
-                  <span className="rounded-full border px-2 py-1">Read</span>
+                  <Link
+                    href={`/articles/${hero.id}`}
+                    className="rounded-full border px-3 py-1 text-sm hover:bg-white/10 transition"
+                  >
+                    Read
+                  </Link>
                 </div>
               </div>
             </section>
@@ -210,8 +215,17 @@ export default async function Home(props: {
                   </p>
                 ) : null}
 
-                <div className="mt-4 text-xs text-muted-foreground">
-                  {new Date(a.created_at).toLocaleString()}
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(a.created_at).toLocaleString()}
+                  </div>
+
+                  <Link
+                    href={`/articles/${a.id}`}
+                    className="rounded-full border px-3 py-1 text-sm hover:bg-muted transition"
+                  >
+                    Read
+                  </Link>
                 </div>
               </article>
             ))}
