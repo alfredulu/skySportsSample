@@ -42,11 +42,13 @@ export type ArticlesPage = {
 
 export async function getArticles(params?: {
   sport?: string;
+  q?: string;
   limit?: number;
   offset?: number;
 }): Promise<ArticlesPage> {
   const qs = new URLSearchParams();
   if (params?.sport) qs.set("sport", params.sport);
+  if (params?.q) qs.set("q", params.q);
   if (params?.limit) qs.set("limit", String(params.limit));
   if (params?.offset) qs.set("offset", String(params.offset));
 
