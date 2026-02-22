@@ -3,6 +3,7 @@ import { getArticles } from "@/lib/api";
 
 type SearchParams = {
   sport?: string;
+  q?: string;
   offset?: string;
   limit?: string;
 };
@@ -12,9 +13,15 @@ function toInt(value: string | undefined, fallback: number) {
   return Number.isFinite(n) && n >= 0 ? n : fallback;
 }
 
-function makeHref(params: { sport?: string; offset?: number; limit?: number }) {
+function makeHref(params: {
+  sport?: string;
+  q?: string;
+  offset?: number;
+  limit?: number;
+}) {
   const qs = new URLSearchParams();
   if (params.sport) qs.set("sport", params.sport);
+  if (params.q) qs.set("q", params.q);
   if (typeof params.offset === "number")
     qs.set("offset", String(params.offset));
   if (typeof params.limit === "number") qs.set("limit", String(params.limit));
@@ -83,6 +90,8 @@ export default async function Home(props: {
     ? await Promise.resolve(props.searchParams)
     : undefined;
 
+  const searchQuery = sp?.q?.trim() || undefined;
+
   const PAGE_SIZE = 6; // we’ll keep it modest for “Load more”
   const sport = sp?.sport?.trim() || undefined;
 
@@ -90,7 +99,7 @@ export default async function Home(props: {
   const limit = toInt(sp?.limit, PAGE_SIZE);
   const offset = 0;
 
-  const page = await getArticles({ sport, limit, offset });
+  const page = await getArticles({ sport, q: searchQuery, limit, offset });
   const items = page.items;
 
   const hasMore = items.length < page.total;
@@ -130,7 +139,12 @@ export default async function Home(props: {
             return (
               <Link
                 key={f.label}
-                href={makeHref({ sport: f.sport, offset: 0, limit: PAGE_SIZE })}
+                href={makeHref({
+                  sport: f.sport,
+                  q: searchQuery,
+                  offset: 0,
+                  limit: PAGE_SIZE,
+                })}
                 className={[
                   "rounded-full border px-3 py-1.5 text-sm transition",
                   "focus:outline-none focus:ring-2 focus:ring-offset-2",
@@ -142,6 +156,42 @@ export default async function Home(props: {
             );
           })}
         </nav>
+
+        <form
+          action="/"
+          method="GET"
+          className="flex flex-col gap-2 sm:flex-row sm:items-center"
+        >
+          {/* preserve sport filter */}
+          {sport ? <input type="hidden" name="sport" value={sport} /> : null}
+
+          {/* reset pagination when searching */}
+          <input type="hidden" name="limit" value={String(PAGE_SIZE)} />
+
+          <input
+            type="text"
+            name="q"
+            defaultValue={searchQuery ?? ""}
+            placeholder="Search headlines, summaries, article body..."
+            className="w-full rounded-xl border bg-background px-3 py-2 text-sm outline-none focus:ring-2"
+          />
+
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="rounded-lg border px-4 py-2 text-sm hover:bg-muted transition"
+            >
+              Search
+            </button>
+
+            <Link
+              href={makeHref({ sport, offset: 0, limit: PAGE_SIZE })}
+              className="rounded-lg border px-4 py-2 text-sm hover:bg-muted transition"
+            >
+              Clear
+            </Link>
+          </div>
+        </form>
       </header>
 
       {/* Empty state */}
@@ -240,7 +290,12 @@ export default async function Home(props: {
 
             {hasMore ? (
               <Link
-                href={makeHref({ sport, offset: 0, limit: limit + PAGE_SIZE })}
+                href={makeHref({
+                  sport,
+                  q: searchQuery,
+                  offset: 0,
+                  limit: limit + PAGE_SIZE,
+                })}
                 className="rounded-lg border px-4 py-2 text-sm hover:bg-muted transition"
               >
                 Load more
