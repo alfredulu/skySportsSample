@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from .db import SessionLocal, engine
 from .models import Article, Base
 from .schemas import ArticlesPage, ArticleOut
@@ -24,15 +25,26 @@ def health():
 def list_articles(
     db: Session = Depends(get_db),
     sport: str | None = Query(default=None, min_length=1, max_length=50),
+    q: str | None = Query(default=None, min_length=1, max_length=100),
     limit: int = Query(default=20, ge=1, le=50),
     offset: int = Query(default=0, ge=0),
 ):
-    q = db.query(Article)
+    query = db.query(Article)
 
     if sport:
-        q = q.filter(Article.sport == sport)
+        query = query.filter(Article.sport == sport)
 
-    total = q.count()
+    if q:
+        term = f"%{q.strip}%"
+        query = query.filter(
+            or_(
+                Article.title.ilike(term),
+                Article.summary.ilike(term),
+                Article.body.ilike(term),
+            )
+        )
+
+    total = query.count()
 
     articles = (
         q.order_by(Article.created_at.desc())
