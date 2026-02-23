@@ -1,5 +1,5 @@
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
 async function fetchWithRetry(
@@ -7,12 +7,13 @@ async function fetchWithRetry(
   opts?: RequestInit,
   tries = 10,
   delayMs = 300
-): Promise<Response> {
+) {
   let lastErr: unknown;
 
   for (let i = 0; i < tries; i++) {
     try {
-      return await fetch(url, opts);
+      const res = await fetch(url, opts);
+      return res;
     } catch (err) {
       lastErr = err;
       await sleep(delayMs);
@@ -26,7 +27,7 @@ export type Article = {
   id: number;
   title: string;
   summary: string | null;
-  body?: string | null;
+  body?: string | null; // ✅ add this
   sport: string;
   source: string | null;
   image_url: string | null;
@@ -42,18 +43,19 @@ export type ArticlesPage = {
 
 export async function getArticles(params?: {
   sport?: string;
-  q?: string;
+  q?: string; // ✅ add this
   limit?: number;
   offset?: number;
 }): Promise<ArticlesPage> {
   const qs = new URLSearchParams();
+
   if (params?.sport) qs.set("sport", params.sport);
-  if (params?.q) qs.set("q", params.q);
+  if (params?.q) qs.set("q", params.q); // ✅ backend expects q
   if (params?.limit) qs.set("limit", String(params.limit));
   if (params?.offset) qs.set("offset", String(params.offset));
 
   const url = `http://localhost:8000/v1/articles${
-    qs.toString() ? `?${qs.toString()}` : ""
+    qs.toString() ? `?${qs}` : ""
   }`;
 
   const res = await fetchWithRetry(url, { cache: "no-store" });
@@ -66,17 +68,13 @@ export async function getArticles(params?: {
 }
 
 export async function getArticle(id: number): Promise<Article> {
-  const url = `http://localhost:8000/v1/articles/${id}`;
-  const res = await fetchWithRetry(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to fetch article: ${res.status}`);
-  return res.json();
-}
+  const res = await fetchWithRetry(`http://localhost:8000/v1/articles/${id}`, {
+    cache: "no-store",
+  });
 
-export async function getArticleById(id: number): Promise<Article> {
-  const url = `http://localhost:8000/v1/articles/${id}`;
-
-  const res = await fetchWithRetry(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Failed to fetch article: ${res.status}`);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch article: ${res.status}`);
+  }
 
   return res.json();
 }
