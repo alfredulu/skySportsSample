@@ -29,25 +29,25 @@ def list_articles(
     limit: int = Query(default=20, ge=1, le=50),
     offset: int = Query(default=0, ge=0),
 ):
-    query = db.query(Article)
+    stmt = db.query(Article)
 
     if sport:
-        query = query.filter(Article.sport == sport)
+        stmt = stmt.filter(Article.sport == sport)
 
     if q:
-        term = f"%{q.strip}%"
-        query = query.filter(
+        like = f"%{q}%"
+        stmt = stmt.filter(
             or_(
-                Article.title.ilike(term),
-                Article.summary.ilike(term),
-                Article.body.ilike(term),
+                Article.title.ilike(like),
+                Article.summary.ilike(like),
+                Article.body.ilike(like),
             )
         )
 
-    total = query.count()
+    total = stmt.count()
 
     articles = (
-        q.order_by(Article.created_at.desc())
+        stmt.order_by(Article.created_at.desc())
         .offset(offset)
         .limit(limit)
         .all()
