@@ -125,6 +125,14 @@ export default async function Home(props: {
             <p className="mt-1 text-sm text-muted-foreground">
               Showing {items.length} of {page.total} • limit {limit}
             </p>
+            {searchQuery ? (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Search:{" "}
+                <span className="font-medium text-foreground">
+                  {searchQuery}
+                </span>
+              </p>
+            ) : null}
           </div>
 
           <div className="hidden sm:block rounded-xl border px-3 py-2 text-xs text-muted-foreground">
@@ -198,8 +206,35 @@ export default async function Home(props: {
       {items.length === 0 ? (
         <div className="rounded-2xl border p-10 text-center">
           <div className="text-lg font-semibold">No stories found</div>
-          <div className="mt-2 text-sm text-muted-foreground">
-            Try switching the sport filter.
+
+          {searchQuery ? (
+            <div className="mt-2 text-sm text-muted-foreground">
+              No results for{" "}
+              <span className="font-medium text-foreground">
+                “{searchQuery}”
+              </span>
+              . Try another search or clear it.
+            </div>
+          ) : (
+            <div className="mt-2 text-sm text-muted-foreground">
+              Try switching the sport filter.
+            </div>
+          )}
+
+          <div className="mt-4 flex justify-center gap-2">
+            <Link
+              href={makeHref({ sport, offset: 0, limit: PAGE_SIZE })}
+              className="rounded-lg border px-4 py-2 text-sm hover:bg-muted transition"
+            >
+              Clear search
+            </Link>
+
+            <Link
+              href={makeHref({ offset: 0, limit: PAGE_SIZE })}
+              className="rounded-lg border px-4 py-2 text-sm hover:bg-muted transition"
+            >
+              Reset all
+            </Link>
           </div>
         </div>
       ) : (

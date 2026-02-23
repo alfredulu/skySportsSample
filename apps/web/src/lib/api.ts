@@ -51,8 +51,8 @@ export async function getArticles(params?: {
 
   if (params?.sport) qs.set("sport", params.sport);
   if (params?.q) qs.set("q", params.q); // ✅ backend expects q
-  if (params?.limit) qs.set("limit", String(params.limit));
-  if (params?.offset) qs.set("offset", String(params.offset));
+  if (params?.limit !== undefined) qs.set("limit", String(params.limit));
+  if (params?.offset !== undefined) qs.set("offset", String(params.offset));
 
   const url = `http://localhost:8000/v1/articles${
     qs.toString() ? `?${qs}` : ""
