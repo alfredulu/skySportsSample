@@ -1,4 +1,4 @@
-# SkySportsSample — Modern Rebuild (Next.js + FastAPI)
+# SkySportsSample - Modern Rebuild (Next.js + FastAPI)
 
 This repository is being rebuilt as a portfolio-grade full-stack app inspired by Sky Sports:
 
